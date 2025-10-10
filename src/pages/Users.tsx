@@ -100,6 +100,13 @@ const Users = () => {
   };
 
   const handleDelete = async (userId: string) => {
+    // Check if trying to delete the permanent admin
+    const userToDelete = users.find(u => u.user_id === userId);
+    if (userToDelete?.email === 'admin@gmail.com') {
+      toast.error("Cannot delete the permanent admin account");
+      return;
+    }
+
     if (!confirm("Are you sure you want to delete this user?")) return;
 
     try {
@@ -128,6 +135,12 @@ const Users = () => {
     e.preventDefault();
     
     if (!editingUser) return;
+
+    // Check if trying to modify the permanent admin's role
+    if (editingUser.email === 'admin@gmail.com' && formData.role !== 'admin') {
+      toast.error("Cannot change the role of the permanent admin account");
+      return;
+    }
 
     try {
       // Update profile
@@ -282,6 +295,7 @@ const Users = () => {
                   <Select
                     value={formData.role}
                     onValueChange={(value: any) => setFormData({ ...formData, role: value })}
+                    disabled={editingUser?.email === 'admin@gmail.com'}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -292,6 +306,9 @@ const Users = () => {
                       <SelectItem value="admin">Admin</SelectItem>
                     </SelectContent>
                   </Select>
+                  {editingUser?.email === 'admin@gmail.com' && (
+                    <p className="text-xs text-muted-foreground">Cannot change permanent admin's role</p>
+                  )}
                 </div>
               </div>
               <DialogFooter>
