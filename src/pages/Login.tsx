@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { signIn, signUp } from "@/lib/supabase-auth";
 import loginBg from "@/assets/login-bg.jpg";
 import { Anchor } from "lucide-react";
+import { CreateAdminButton } from "@/components/CreateAdminButton";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -63,6 +64,9 @@ const Login = () => {
           <CardDescription className="text-center text-base">
             Join the crew and start your waffle adventure!
           </CardDescription>
+          <div className="flex justify-center pt-2">
+            <CreateAdminButton />
+          </div>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">

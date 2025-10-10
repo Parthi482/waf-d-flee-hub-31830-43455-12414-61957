@@ -59,9 +59,6 @@ const Landing = () => {
           </div>
         </div>
 
-        {/* Decorative Elements */}
-        <div className="absolute top-10 left-10 w-32 h-32 border-4 border-accent/30 rounded-full animate-pulse" />
-        <div className="absolute bottom-10 right-10 w-40 h-40 border-4 border-primary/20 rounded-full animate-pulse" style={{ animationDelay: '1s' }} />
       </section>
 
       {/* Features Section */}

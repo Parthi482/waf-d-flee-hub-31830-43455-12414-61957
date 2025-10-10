@@ -1,9 +1,10 @@
 import { ReactNode, useEffect } from "react";
+import * as React from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { signOut } from "@/lib/supabase-auth";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, FileText, Package, ShoppingCart, LogOut, FolderTree } from "lucide-react";
+import { LayoutDashboard, FileText, Package, ShoppingCart, LogOut, FolderTree, Users, Menu, X } from "lucide-react";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -12,6 +13,7 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -47,14 +49,35 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     { path: "/dashboard/catalogue", icon: Package, label: "Catalogue" },
     { path: "/dashboard/categories", icon: FolderTree, label: "Categories" },
     { path: "/dashboard/orders", icon: ShoppingCart, label: "Orders" },
+    { path: "/dashboard/users", icon: Users, label: "Users" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
     <div className="min-h-screen flex w-full bg-background">
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="fixed top-4 left-4 z-50 lg:hidden p-2 rounded-lg bg-sidebar border border-sidebar-border"
+      >
+        {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+      </button>
+
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-sidebar border-r border-sidebar-border flex flex-col h-screen sticky top-0">
+      <aside className={`
+        w-64 bg-sidebar border-r border-sidebar-border flex flex-col h-screen
+        fixed lg:sticky top-0 z-40 transition-transform duration-300
+        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
         <div className="p-6">
           <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
             WAF-D-FLE
@@ -69,6 +92,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               <Link
                 key={item.path}
                 to={item.path}
+                onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                   isActive(item.path)
                     ? "bg-sidebar-primary text-sidebar-primary-foreground"
@@ -95,7 +119,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto bg-background">
+      <main className="flex-1 overflow-auto bg-background lg:ml-0">
         {children}
       </main>
     </div>
