@@ -76,20 +76,25 @@ const Orders = () => {
       return;
     }
 
-    const newOrder: Order = {
-      id: Date.now().toString(),
-      items: cart,
-      total: getCartTotal(),
-      date: new Date(),
-      status: 'completed'
-    };
+    try {
+      const newOrder: Order = {
+        id: Date.now().toString(),
+        items: cart,
+        total: getCartTotal(),
+        date: new Date(),
+        status: 'completed'
+      };
 
-    const savedOrders = localStorage.getItem('orders');
-    const orders = savedOrders ? JSON.parse(savedOrders) : [];
-    localStorage.setItem('orders', JSON.stringify([...orders, newOrder]));
+      const savedOrders = localStorage.getItem('orders');
+      const orders = savedOrders ? JSON.parse(savedOrders) : [];
+      localStorage.setItem('orders', JSON.stringify([...orders, newOrder]));
 
-    setCart([]);
-    toast.success("Order confirmed successfully!");
+      setCart([]);
+      toast.success("Order confirmed successfully!");
+    } catch (error) {
+      console.error("Error confirming order:", error);
+      toast.error("Failed to confirm order. Please try again.");
+    }
   };
 
   return (

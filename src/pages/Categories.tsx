@@ -37,49 +37,60 @@ const Categories = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (editingCategory) {
-      const savedProducts = localStorage.getItem('products');
-      if (savedProducts) {
-        const products = JSON.parse(savedProducts);
-        const updatedProducts = products.map((p: any) => 
-          p.category === editingCategory.name ? { ...p, category: categoryName } : p
-        );
-        localStorage.setItem('products', JSON.stringify(updatedProducts));
+    try {
+      if (editingCategory) {
+        const savedProducts = localStorage.getItem('products');
+        if (savedProducts) {
+          const products = JSON.parse(savedProducts);
+          const updatedProducts = products.map((p: any) => 
+            p.category === editingCategory.name ? { ...p, category: categoryName } : p
+          );
+          localStorage.setItem('products', JSON.stringify(updatedProducts));
+        }
+        
+        setCategories(categories.map(c => 
+          c.id === editingCategory.id ? { ...c, name: categoryName } : c
+        ));
+        toast.success("Category updated successfully!");
+      } else {
+        const newCategory: Category = {
+          id: categoryName,
+          name: categoryName
+        };
+        setCategories([...categories, newCategory]);
+        toast.success("Category added successfully!");
       }
-      
-      setCategories(categories.map(c => 
-        c.id === editingCategory.id ? { ...c, name: categoryName } : c
-      ));
-      toast.success("Category updated successfully!");
-    } else {
-      const newCategory: Category = {
-        id: categoryName,
-        name: categoryName
-      };
-      setCategories([...categories, newCategory]);
-      toast.success("Category added successfully!");
-    }
 
-    setIsDialogOpen(false);
-    resetForm();
+      setIsDialogOpen(false);
+      resetForm();
+    } catch (error) {
+      console.error("Error saving category:", error);
+      toast.error("Failed to save category. Please try again.");
+    }
   };
 
   const handleDelete = (id: string) => {
-    const savedProducts = localStorage.getItem('products');
-    if (savedProducts) {
-      const products = JSON.parse(savedProducts);
-      const hasProducts = products.some((p: any) => p.category === id);
-      
-      if (hasProducts) {
-        toast.error("Cannot delete category with existing products");
-        setDeleteId(null);
-        return;
+    try {
+      const savedProducts = localStorage.getItem('products');
+      if (savedProducts) {
+        const products = JSON.parse(savedProducts);
+        const hasProducts = products.some((p: any) => p.category === id);
+        
+        if (hasProducts) {
+          toast.error("Cannot delete category with existing products");
+          setDeleteId(null);
+          return;
+        }
       }
+      
+      setCategories(categories.filter(c => c.id !== id));
+      toast.success("Category deleted successfully!");
+      setDeleteId(null);
+    } catch (error) {
+      console.error("Error deleting category:", error);
+      toast.error("Failed to delete category. Please try again.");
+      setDeleteId(null);
     }
-    
-    setCategories(categories.filter(c => c.id !== id));
-    toast.success("Category deleted successfully!");
-    setDeleteId(null);
   };
 
   const handleEdit = (category: Category) => {

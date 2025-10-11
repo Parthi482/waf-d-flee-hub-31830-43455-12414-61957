@@ -44,33 +44,44 @@ const Catalogue = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const newProduct: Product = {
-      id: editingProduct?.id || Date.now().toString(),
-      name: formData.name,
-      category: formData.category,
-      miniPrice: formData.miniPrice ? parseFloat(formData.miniPrice) : undefined,
-      regularPrice: parseFloat(formData.regularPrice),
-      image: formData.image || undefined,
-      description: formData.description || undefined
-    };
+    try {
+      const newProduct: Product = {
+        id: editingProduct?.id || Date.now().toString(),
+        name: formData.name,
+        category: formData.category,
+        miniPrice: formData.miniPrice ? parseFloat(formData.miniPrice) : undefined,
+        regularPrice: parseFloat(formData.regularPrice),
+        image: formData.image || undefined,
+        description: formData.description || undefined
+      };
 
-    if (editingProduct) {
-      const updated = products.map(p => p.id === editingProduct.id ? newProduct : p);
-      saveProducts(updated);
-      toast.success("Product updated successfully!");
-    } else {
-      saveProducts([...products, newProduct]);
-      toast.success("Product added successfully!");
+      if (editingProduct) {
+        const updated = products.map(p => p.id === editingProduct.id ? newProduct : p);
+        saveProducts(updated);
+        toast.success("Product updated successfully!");
+      } else {
+        saveProducts([...products, newProduct]);
+        toast.success("Product added successfully!");
+      }
+
+      setIsDialogOpen(false);
+      resetForm();
+    } catch (error) {
+      console.error("Error saving product:", error);
+      toast.error("Failed to save product. Please try again.");
     }
-
-    setIsDialogOpen(false);
-    resetForm();
   };
 
   const handleDelete = (id: string) => {
-    saveProducts(products.filter(p => p.id !== id));
-    toast.success("Product deleted successfully!");
-    setDeleteId(null);
+    try {
+      saveProducts(products.filter(p => p.id !== id));
+      toast.success("Product deleted successfully!");
+      setDeleteId(null);
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      toast.error("Failed to delete product. Please try again.");
+      setDeleteId(null);
+    }
   };
 
   const handleEdit = (product: Product) => {

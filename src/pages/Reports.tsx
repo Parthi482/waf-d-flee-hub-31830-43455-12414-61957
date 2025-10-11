@@ -70,6 +70,7 @@ const Reports = () => {
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
+                  max={new Date().toISOString().split('T')[0]}
                   className="text-sm"
                 />
               </div>
@@ -80,6 +81,7 @@ const Reports = () => {
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
+                  max={new Date().toISOString().split('T')[0]}
                   className="text-sm"
                 />
               </div>
